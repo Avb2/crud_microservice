@@ -1,0 +1,47 @@
+services:
+  auth:
+    build:
+      context: ./auth
+    volumes:
+      - ./keys:/app/keys
+    expose:
+      - "5000"
+
+  tickets:
+    build:
+      context: ./ticket
+
+    volumes:
+      - ./keys:/app/keys
+    expose:
+      - "5000"
+
+  events:
+    build:
+      context: ./events
+    volumes:
+      - ./keys:/app/keys
+    expose:
+      - "5000"
+
+  user:
+    build:
+      context: ./user
+    volumes:
+      - ./keys:/app/keys
+    expose:
+      - "5000"
+  
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password 
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: alex
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+      - ./db-data:/var/lib/mysql
