@@ -26,7 +26,7 @@ resource "aws_alb_target_group" "service" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = 3
-    path                = var.health_check_path
+    path                = "/${each.key}${var.health_check_path}"
     unhealthy_threshold = 2
   }
 }
@@ -75,13 +75,9 @@ resource "aws_appautoscaling_target" "target" {
   service_namespace    = "ecs"
   resource_id          = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.service[each.key].name}"
   scalable_dimension   = "ecs:service:DesiredCount"
-  role_arn             = aws_iam_role.ecs_auto_scale_role.arn
   min_capacity         = local.scale_config.min_capacity
   max_capacity         = local.scale_config.max_capacity
 }
-
-
-
 
 resource "aws_appautoscaling_policy" "scale_up" {
   for_each             = local.services
@@ -104,10 +100,6 @@ resource "aws_appautoscaling_policy" "scale_up" {
   depends_on = [aws_appautoscaling_target.target]
 }
 
-
-
-
-
 resource "aws_appautoscaling_policy" "scale_down" {
   for_each             = local.services
   name                 = "${each.key}-scale-down"
@@ -128,10 +120,6 @@ resource "aws_appautoscaling_policy" "scale_down" {
 
   depends_on = [aws_appautoscaling_target.target]
 }
-
-
-
-
 
 resource "aws_cloudwatch_metric_alarm" "high_cpu" {
   for_each             = local.services
@@ -169,13 +157,35 @@ resource "aws_cloudwatch_metric_alarm" "low_cpu" {
   }
 
   alarm_actions = [aws_appautoscaling_policy.scale_down[each.key].arn]
-}resource "aws_ecs_cluster" "main" {
+}
+resource "aws_ecs_cluster" "main" {
     name = "ticket-cluster"
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_logs" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+
+resource "aws_iam_role_policy_attachment" "ecr_access" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecsTaskExecutionRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ecs-tasks.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
 }
 
 
@@ -223,7 +233,7 @@ resource "aws_ecs_service" "service" {
   network_configuration {
     security_groups  = [aws_security_group.ecs_tasks.id]
     subnets          = aws_subnet.private[*].id
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
 load_balancer {
@@ -233,9 +243,11 @@ load_balancer {
 }
 
   depends_on = [
-    aws_alb_listener.front_end,
-    aws_iam_role_policy_attachment.ecs-task-execution-role-policy-attachment
-  ]
+  aws_alb_listener.front_end,
+  aws_iam_role_policy_attachment.ecs_task_logs,
+  aws_iam_role_policy_attachment.ecr_access
+]
+
 }
 locals {
   services = {
@@ -244,28 +256,28 @@ locals {
       image          = var.auth_image
       port           = var.auth_port
       container_name = "auth-service"
-      template_file  = data.template_file.auth_service.rendered
+      template_file  = local.auth_task_def
     }
     user = {
       family         = "user-service-family"
       image          = var.user_image
       port           = var.user_port
       container_name = "user-service"
-      template_file  = data.template_file.user_service.rendered
+      template_file  = local.user_task_def
     }
     event = {
       family         = "event-service-family"
       image          = var.event_image
       port           = var.event_port
       container_name = "event-service"
-      template_file  = data.template_file.event_service.rendered
+      template_file  = local.event_task_def
     }
     ticket = {
       family         = "ticket-service-family"
       image          = var.ticket_image
       port           = var.ticket_port
       container_name = "ticket-service"
-      template_file  = data.template_file.ticket_service.rendered
+      template_file  = local.ticket_task_def
     }
   }
 
@@ -282,6 +294,35 @@ locals {
     scale_up_threshold    = 85
     scale_down_threshold  = 10
   }
+
+  auth_task_def = templatefile("${path.module}/templates/ecs/auth_service.json.tpl", {
+  auth_image      = var.auth_image
+  auth_port       = var.auth_port
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+})
+
+user_task_def = templatefile("${path.module}/templates/ecs/user_service.json.tpl", {
+  user_image      = var.user_image
+  user_port       = var.user_port
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+})
+
+ticket_task_def = templatefile("${path.module}/templates/ecs/ticket_service.json.tpl", {
+  ticket_image      = var.ticket_image
+  ticket_port       = var.ticket_port
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+})
+
+event_task_def = templatefile("${path.module}/templates/ecs/event_service.json.tpl", {
+  event_image      = var.event_image
+  event_port       = var.event_port
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+})
+
 }
 data "aws_availability_zones" "available" {
 }
@@ -299,7 +340,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_subnet" "public" {
     count = var.az_count
-    cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, az_count + count.index)
+    cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, var.az_count + count.index)
     availability_zone = data.aws_availability_zones.available.names[count.index]
     vpc_id = aws_vpc.main.id
     map_public_ip_on_launch = true
@@ -409,7 +450,7 @@ variable "app_port" {
 }
 
 variable "health_check_path" {
-  default = "/"
+  default = "/health"
 }
 
 

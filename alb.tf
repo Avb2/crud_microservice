@@ -26,7 +26,7 @@ resource "aws_alb_target_group" "service" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = 3
-    path                = var.health_check_path
+    path                = "/${each.key}/health" 
     unhealthy_threshold = 2
   }
 }

@@ -45,29 +45,29 @@ locals {
   }
 
   auth_task_def = templatefile("${path.module}/templates/ecs/auth_service.json.tpl", {
-  app_image      = var.auth_image
-  app_port       = var.auth_port
+  auth_image      = var.auth_image
+  auth_port       = var.auth_port
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
 })
 
 user_task_def = templatefile("${path.module}/templates/ecs/user_service.json.tpl", {
-  app_image      = var.user_image
-  app_port       = var.user_port
+  user_image      = var.user_image
+  user_port       = var.user_port
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
 })
 
 ticket_task_def = templatefile("${path.module}/templates/ecs/ticket_service.json.tpl", {
-  app_image      = var.ticket_image
-  app_port       = var.ticket_port
+  ticket_image      = var.ticket_image
+  ticket_port       = var.ticket_port
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
 })
 
 event_task_def = templatefile("${path.module}/templates/ecs/event_service.json.tpl", {
-  app_image      = var.event_image
-  app_port       = var.event_port
+  event_image      = var.event_image
+  event_port       = var.event_port
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
 })

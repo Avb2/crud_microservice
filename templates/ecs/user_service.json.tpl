@@ -3,11 +3,11 @@
   "containerDefinitions": [
     {
       "name": "user_service",
-      "image": "${app_image}",
+      "image": "${user_image}",
       "portMappings": [
         {
-          "containerPort": ${app_port},
-          "hostPort": ${app_port}
+          "containerPort": ${user_port},
+          "hostPort": ${user_port}
         }
       ],
       "essential": true

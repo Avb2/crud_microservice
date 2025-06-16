@@ -3,11 +3,11 @@
   "containerDefinitions": [
     {
       "name": "auth_service",
-      "image": "${app_image}",
+      "image": "${auth_image}",
       "portMappings": [
         {
-          "containerPort": ${app_port},
-          "hostPort": ${app_port}
+          "containerPort": ${auth_port},
+          "hostPort": ${auth_port}
         }
       ],
       "essential": true

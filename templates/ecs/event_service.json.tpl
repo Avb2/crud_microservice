@@ -3,11 +3,11 @@
   "containerDefinitions": [
     {
       "name": "event_service",
-      "image": "${app_image}",
+      "image": "${event_image}",
       "portMappings": [
         {
-          "containerPort": ${app_port},
-          "hostPort": ${app_port}
+          "containerPort": ${event_port},
+          "hostPort": ${event_port}
         }
       ],
       "essential": true

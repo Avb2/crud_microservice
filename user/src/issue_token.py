@@ -6,13 +6,15 @@ def issue_token(username: str, response: Response):
     try:
         # Sends POST request to auth service to get tokens
         auth_res = requests.post(
-            "http://auth:5000/issue-token",
+            "http://auth-service.internal:5001/auth/issue-token",
             json={"username": username},
             headers={"Content-Type": "application/json"},
             timeout=5 
         )
 
         if auth_res.status_code != 200:
+            print(auth_res.status_code)
+            print(auth_res.text)
             raise HTTPException(status_code=502, detail="Token service failed")
         
         # Get the tokens from the response

@@ -1,0 +1,23 @@
+{
+  "family": "migration-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::897729097986:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "migration",
+      "image": "public.ecr.aws/i4n6p6k3/eventapi/migration:latest",
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/migration-task",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "migration"
+        }
+      }
+    }
+  ]
+}

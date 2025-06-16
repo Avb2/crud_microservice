@@ -11,7 +11,13 @@ app = FastAPI()
 class TokenRequest(BaseModel):
     username: str
 
-@app.post("/issue-token")
+app.router
+
+@app.get("/auth/health")
+def health_check():
+    return {"status": "ok"}
+
+@app.post("/auth/issue-token")
 def issue_token(data: TokenRequest):
     with open("/app/keys/ticket-priv-key.pem", "r") as file:
         priv = file.read()
@@ -45,7 +51,7 @@ def issue_token(data: TokenRequest):
 
 
 
-@app.post("/refresh-token")
+@app.post("/auth/refresh-token")
 def refresh_token(response: Response, access_token: str = Form(...)):
     try:
         with open("/app/keys/public.pem", "r") as file:

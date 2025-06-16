@@ -3,11 +3,11 @@
   "containerDefinitions": [
     {
       "name": "ticket_service",
-      "image": "${app_image}",
+      "image": "${ticket_image}",
       "portMappings": [
         {
-          "containerPort": ${app_port},
-          "hostPort": ${app_port}
+          "containerPort": ${ticket_port},
+          "hostPort": ${ticket_port}
         }
       ],
       "essential": true
