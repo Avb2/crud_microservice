@@ -17,7 +17,7 @@ variable "health_check_path" {
 
 
 variable "auth_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/auth:v2"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/auth:v8"
 }
 
 variable "auth_port" {
@@ -25,7 +25,7 @@ variable "auth_port" {
 }
 
 variable "user_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/user:v4.3"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/user:v6"
 }
 
 variable "user_port" {
@@ -33,7 +33,7 @@ variable "user_port" {
 }
 
 variable "event_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/events:v2"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/events:v5"
 }
 
 variable "event_port" {
@@ -41,7 +41,7 @@ variable "event_port" {
 }
 
 variable "ticket_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/tickets:v2"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/tickets:v5"
 }
 
 variable "ticket_port" {

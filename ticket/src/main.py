@@ -12,7 +12,7 @@ def health_check():
 def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(validate_token)):
     try:
         conn = mysql.connector.connect(
-            host ="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host ="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -45,7 +45,7 @@ def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(
 def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(validate_token)):
     try:
         conn = mysql.connector.connect(
-            host ="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host ="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -77,7 +77,7 @@ def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(
 def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(validate_token)):
     try:
         conn = mysql.connector.connect(
-            host ="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host ="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"

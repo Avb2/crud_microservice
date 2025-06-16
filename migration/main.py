@@ -4,7 +4,7 @@ import mysql.connector
 def create_tables():
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"

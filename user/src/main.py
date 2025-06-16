@@ -17,7 +17,7 @@ def health_check():
 def sign_up(username: str = Form(...), password: str = Form(...), response: Response = None):
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -55,7 +55,7 @@ def sign_in(username: str = Form(...),
     response: Response = None):
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -89,7 +89,7 @@ def refresh_session(
 
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"

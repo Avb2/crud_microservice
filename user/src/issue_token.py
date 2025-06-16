@@ -6,7 +6,7 @@ def issue_token(username: str, response: Response):
     try:
         # Sends POST request to auth service to get tokens
         auth_res = requests.post(
-            "http://auth-service.internal:5001/auth/issue-token",
+            "http://auth-service.eventapi:5000/auth/issue-token",
             json={"username": username},
             headers={"Content-Type": "application/json"},
             timeout=5 

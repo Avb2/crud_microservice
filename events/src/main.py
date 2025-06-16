@@ -11,11 +11,12 @@ def health_check():
     return {"status": "ok"}
 
 
+
 @app.get("/event/get-events")
 def get_events(token=Depends(validate_token)):
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -42,7 +43,7 @@ def get_events(token=Depends(validate_token)):
 def create_events(name: str = Form(...), time: str = Form(...), token=Depends(validate_token)):
     try:
         conn = mysql.connector.connect(
-            host="eventsdb.cluster-c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
             user="alex",
             passwd="password",
             database="mydb"
@@ -56,3 +57,5 @@ def create_events(name: str = Form(...), time: str = Form(...), token=Depends(va
         return {"status": 201, "body": {"data": "Event created"}}
     except Exception as e:
         return {"status": 500, "body": {"error": str(e)}}
+    
+
