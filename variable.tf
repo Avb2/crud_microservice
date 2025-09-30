@@ -17,7 +17,7 @@ variable "health_check_path" {
 
 
 variable "auth_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/auth:v8"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/auth:v11"
 }
 
 variable "auth_port" {
@@ -41,7 +41,7 @@ variable "event_port" {
 }
 
 variable "ticket_image" {
-    default = "public.ecr.aws/i4n6p6k3/eventapi/tickets:v5"
+    default = "public.ecr.aws/i4n6p6k3/eventapi/tickets:v10"
 }
 
 variable "ticket_port" {

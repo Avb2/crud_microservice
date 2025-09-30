@@ -8,8 +8,9 @@ app = FastAPI()
 def health_check():
     return {"status": "ok"}
 
+
 @app.post("/ticket/new-ticket")
-def create_ticket(name: str = Form(...), userid: str = Form(...), token=Depends(validate_token)):
+def create_ticket(name: str = Form(...), userid: str = Form(...)):
     try:
         conn = mysql.connector.connect(
             host ="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",

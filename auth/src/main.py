@@ -17,8 +17,8 @@ app.router
 def health_check():
     return {"status": "ok"}
 
-@app.post("/auth/issue-token")
-def issue_token(data: TokenRequest):
+@app.post("/auth/sign-up")
+def issue_token(response: Response, username:str = Form(...), ):
     with open("/app/keys/ticket-priv-key.pem", "r") as file:
         priv = file.read()
 
@@ -26,7 +26,7 @@ def issue_token(data: TokenRequest):
 
     access_payload = {
         "sub": str(uuid.uuid4()),
-        "username": data.username,
+        "username": username,
         "role": "user",
         "exp": epoch_time + 15 * 60,
         "iat": epoch_time,
@@ -35,7 +35,7 @@ def issue_token(data: TokenRequest):
 
     refresh_payload = {
         "sub": str(uuid.uuid4()),
-        "username": data.username,
+        "username": username,
         "exp": epoch_time + 7 * 24 * 60 * 60,
         "iat": epoch_time,
         "type": "refresh"
@@ -44,9 +44,30 @@ def issue_token(data: TokenRequest):
     access_token = jwt.encode(access_payload, priv, algorithm="RS256")
     refresh_token = jwt.encode(refresh_payload, priv, algorithm="RS256")
 
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,
+        samesite="Strict",
+        max_age=900 
+    )
+
+
+
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,
+        samesite="Strict",
+        max_age=7 * 24 * 60 * 60  
+    )
+
     return {
         "access_token": access_token,
-        "refresh_token": refresh_token
+        "refresh_token": refresh_token,
+        "data": "User Created!"
     }
 
 
@@ -87,6 +108,27 @@ def refresh_token(response: Response, access_token: str = Form(...)):
 
     encoded_access = jwt.encode(new_access, priv, algorithm="RS256")
     encoded_refresh = jwt.encode(new_refresh, priv, algorithm="RS256")
+
+
+    response.set_cookie(
+        key="access_token",
+        value=encoded_access,
+        httponly=True,
+        secure=False,
+        samesite="Strict",
+        max_age=900 
+    )
+
+
+
+    response.set_cookie(
+        key="refresh_token",
+        value=encoded_refresh,
+        httponly=True,
+        secure=False,
+        samesite="Strict",
+        max_age=7 * 24 * 60 * 60  
+    )
 
 
     return {

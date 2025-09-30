@@ -54,23 +54,23 @@ def sign_in(username: str = Form(...),
     password: str = Form(...),
     response: Response = None):
     try:
-        conn = mysql.connector.connect(
-            host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
-            user="alex",
-            passwd="password",
-            database="mydb"
+    #     conn = mysql.connector.connect(
+    #         host="eventsdb-instance-1.c1qc6uswoceq.us-east-2.rds.amazonaws.com",
+    #         user="alex",
+    #         passwd="password",
+    #         database="mydb"
 
-        )
-        cur = conn.cursor()
-        cur.execute("SELECT password FROM users WHERE username = %s", (username,))
-        result = cur.fetchone()
+    #     )
+    #     cur = conn.cursor()
+    #     cur.execute("SELECT password FROM users WHERE username = %s", (username,))
+    #     result = cur.fetchone()
 
                 
-        cur.close()
-        conn.close()
+    #     cur.close()
+    #     conn.close()
 
-        if not result or not bcrypt.checkpw(password.encode(), result[0].encode()):
-            raise HTTPException(status_code=401, detail="Invalid username or password")
+    #     if not result or not bcrypt.checkpw(password.encode(), result[0].encode()):
+    #         raise HTTPException(status_code=401, detail="Invalid username or password")
 
         issue_token(username, response)
         return {"status": 200, "body": {"data": "Login successful"}}

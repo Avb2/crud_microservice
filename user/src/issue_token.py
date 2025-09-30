@@ -4,13 +4,13 @@ from fastapi import Response, HTTPException
 
 def issue_token(username: str, response: Response):
     try:
-        # Sends POST request to auth service to get tokens
+       # Sends POST request to auth service to get tokens
         auth_res = requests.post(
             "http://auth-service.eventapi:5000/auth/issue-token",
             json={"username": username},
             headers={"Content-Type": "application/json"},
             timeout=5 
-        )
+        ) 
 
         if auth_res.status_code != 200:
             print(auth_res.status_code)
